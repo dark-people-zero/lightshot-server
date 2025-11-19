@@ -43,6 +43,10 @@ app.post("/upload/:a/:b/", function (req, res) {
 	res.send(body);
 });
 
+app.get("/", (req, res) => {
+	res.send("Lightshot server is running");
+});
+
 app.g;
 
 http.createServer(app).listen(config.listenPort, () => {
