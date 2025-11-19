@@ -6,6 +6,8 @@ const app        = express();
 const { uid }    = require('uid');
 const config     = require('./config.json');
 
+if(!fs.existsSync(config.uploadDir)) fs.mkdirSync(config.uploadDir);
+
 app.use(fileUpload());
 
 app.use('/i', express.static(config.uploadDir))
