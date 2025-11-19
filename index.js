@@ -44,7 +44,7 @@ app.post("/upload/:a/:b/", function (req, res) {
 });
 
 app.get("/", (req, res) => {
-	res.send("Lightshot server is running");
+	res.send("Lightshot server is running, cokkkkk");
 });
 
 app.g;
