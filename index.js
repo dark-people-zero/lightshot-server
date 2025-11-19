@@ -12,7 +12,7 @@ app.use(fileUpload());
 
 app.use("/i", express.static(config.uploadDir));
 
-app.post("/upload/:a/:b/", function (req, res) {
+app.post("/uploadd/:a/:b/", function (req, res) {
 	console.log("masuk request baru");
 	
 	if (!req.files) return res.status(500).send("No file uploaded");
