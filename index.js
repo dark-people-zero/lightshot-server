@@ -13,6 +13,8 @@ app.use(fileUpload());
 app.use("/i", express.static(config.uploadDir));
 
 app.post("/upload/:a/:b/", function (req, res) {
+	console.log("masuk request baru");
+	
 	if (!req.files) return res.status(500).send("No file uploaded");
 
 	let newFileName;
@@ -37,7 +39,7 @@ app.post("/upload/:a/:b/", function (req, res) {
 		})(req.files[k]);
 	}
 
-	const url = config.baseUrl.replace("{{filename}}", newFileName);
+	const url = config.baseUrl2.replace("{{filename}}", newFileName);
 	const body = `<response><status>success</status><share>${url}</share></response>
 `;
 	res.send(body);

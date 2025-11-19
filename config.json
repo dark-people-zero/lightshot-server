@@ -1,5 +1,6 @@
 {
 	"listenPort": 12345,
 	"uploadDir" : "./upload",
-	"baseUrl"   : "http://127.0.0.1:12345/i/{{filename}}"
+	"baseUrl"   : "http://127.0.0.1:12345/i/{{filename}}",
+	"baseUrl2"   : "https://htrimage.site/i/{{filename}}"
 }
