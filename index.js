@@ -14,36 +14,48 @@ app.use("/i", express.static(config.uploadDir));
 
 app.post("/uploadd/:a/:b/", function (req, res) {
 	console.log("masuk request baru");
-	
-	if (!req.files) return res.status(500).send("No file uploaded");
 
-	let newFileName;
-
-	for (let k in req.files) {
-		((file) => {
-			if (file.name.indexOf("thumb") == -1) {
-				const split = file.name.split(".");
-				const ext = split.pop();
-				fileName = uid(8) + "." + ext;
-				let count = 1;
-
-				while (fs.existsSync(config.uploadDir + "/" + fileName))
-					fileName = `${uid(8)}.${ext})`;
-
-				file.mv(config.uploadDir + "/" + fileName, function (err) {
-					if (err) return res.status(500).send(err);
-				});
-
-				newFileName = fileName;
-			}
-		})(req.files[k]);
+	if (!req.files) {
+		return res.status(500).send("No file uploaded");
 	}
 
-	const url = config.baseUrl2.replace("{{filename}}", newFileName);
-	const body = `<response><status>success</status><share>${url}</share></response>
-`;
-	res.send(body);
+	let mainFile = null;
+
+	// cari file yg bukan "thumb"
+	for (let k in req.files) {
+		const file = req.files[k];
+		if (file.name.indexOf("thumb") === -1) {
+			mainFile = file;
+			break;
+		}
+	}
+
+	if (!mainFile) {
+		return res.status(400).send("No main file uploaded");
+	}
+
+	const split = mainFile.name.split(".");
+	const ext = split.pop();
+
+	let fileName = uid(8) + "." + ext;
+
+	while (fs.existsSync(config.uploadDir + "/" + fileName)) {
+		fileName = uid(8) + "." + ext; // (tadi ada extra ')' di kode kamu)
+	}
+
+	mainFile.mv(config.uploadDir + "/" + fileName, function (err) {
+		if (err) {
+			console.error("Error saat move file:", err);
+			return res.status(500).send(err);
+		}
+
+		const url = config.baseUrl2.replace("{{filename}}", fileName);
+		const body = `<response><status>success</status><share>${url}</share></response>\n`;
+
+		return res.send(body); // HANYA di sini kirim response
+	});
 });
+
 
 app.get("/", (req, res) => {
 	res.send("Lightshot server is running, cokkkkk");
