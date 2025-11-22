@@ -125,7 +125,7 @@
         <div class="flex items-center justify-between mt-6">
 
             <!-- Prev -->
-            <a href="/gallery?page=<%= page - 1 %>&limit=<%= limit %>&q=<%= encodeURIComponent(q || '') %>&start=<%= start %>&end=<%= end %>"
+            <a href="/list?page=<%= page - 1 %>&limit=<%= limit %>&q=<%= encodeURIComponent(q || '') %>&start=<%= start %>&end=<%= end %>"
                 class="px-4 py-2 rounded-md border text-sm
                <%= page <= 1 ? 'pointer-events-none opacity-40 bg-gray-200' : 'bg-white hover:bg-gray-100' %>">
                 « Prev
@@ -140,7 +140,7 @@
             </span>
 
             <!-- Next -->
-            <a href="/gallery?page=<%= page + 1 %>&limit=<%= limit %>&q=<%= encodeURIComponent(q || '') %>&start=<%= start %>&end=<%= end %>"
+            <a href="/list?page=<%= page + 1 %>&limit=<%= limit %>&q=<%= encodeURIComponent(q || '') %>&start=<%= start %>&end=<%= end %>"
                 class="px-4 py-2 rounded-md border text-sm
                <%= page >= totalPages ? 'pointer-events-none opacity-40 bg-gray-200' : 'bg-white hover:bg-gray-100' %>">
                 Next »
