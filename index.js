@@ -6,6 +6,13 @@ const app = express();
 const { uid } = require("uid");
 const config = require("./config.json");
 
+const { getImagesFromFolder } = require("./lib/getImagesFromFolder");
+const path = require("path");
+
+// set view engine
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
 if (!fs.existsSync(config.uploadDir)) fs.mkdirSync(config.uploadDir);
 
 app.use(fileUpload());
@@ -61,7 +68,34 @@ app.get("/", (req, res) => {
 	res.send("Lightshot server is running, cokkkkk");
 });
 
-app.g;
+// route list user dengan pagination
+app.get("/list", async (req, res, next) => {
+	try {
+		const { page, limit, q, start, end } = req.query;
+
+		const data = getImagesFromFolder({
+			page,
+			limit,
+			q,
+			start,
+			end,
+		});
+
+		res.render("list", {
+			images: data.images,
+			page: data.page,
+			limit: data.limit,
+			totalItems: data.totalItems,
+			totalPages: data.totalPages,
+			// kirim balik query biar bisa dipakai di form & pagination
+			q: q || "",
+			start: start || "",
+			end: end || "",
+		});
+	} catch (err) {
+		next(err);
+	}
+});
 
 http.createServer(app).listen(config.listenPort, () => {
 	console.log("lightshot http server started on port " + config.listenPort);

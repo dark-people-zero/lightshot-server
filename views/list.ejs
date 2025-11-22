@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gallery</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen p-6">
+
+    <div class="max-w-6xl mx-auto bg-white shadow-lg rounded-xl p-6">
+
+        <h1 class="text-2xl font-bold mb-2">Gallery Gambar</h1>
+        <p class="text-gray-600 mb-4">
+            Total gambar: <strong>
+                <%= totalItems %>
+            </strong>
+        </p>
+
+        <!-- Filter & Search -->
+        <form method="get" action="/gallery" class="mb-6 space-y-3">
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Search -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Pencarian (nama / URL)
+                    </label>
+                    <input type="text" name="q" value="<%= q %>" placeholder="contoh: 04362f97 atau /i/04362f97.png"
+                        class="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                </div>
+
+                <!-- Tanggal Mulai -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Tanggal mulai
+                    </label>
+                    <input type="date" name="start" value="<%= start %>"
+                        class="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                </div>
+
+                <!-- Tanggal Akhir -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Tanggal akhir
+                    </label>
+                    <input type="date" name="end" value="<%= end %>"
+                        class="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between mt-2">
+                <div class="flex items-center gap-2">
+                    <label class="text-sm text-gray-700">Per halaman:</label>
+                    <select name="limit"
+                        class="border rounded-md px-2 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                        <option value="10" <%=Number(limit)===10 ? 'selected' : '' %>>10</option>
+                        <option value="25" <%=Number(limit)===25 ? 'selected' : '' %>>25</option>
+                        <option value="50" <%=Number(limit)===50 ? 'selected' : '' %>>50</option>
+                    </select>
+                </div>
+
+                <button type="submit"
+                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm shadow">
+                    Terapkan Filter
+                </button>
+            </div>
+
+        </form>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            <table class="w-full border border-gray-300 rounded-lg overflow-hidden text-sm">
+                <thead class="bg-gray-200 text-gray-700">
+                    <tr>
+                        <th class="py-2 px-3 border border-gray-300 text-left">No</th>
+                        <th class="py-2 px-3 border border-gray-300 text-left">Preview</th>
+                        <th class="py-2 px-3 border border-gray-300 text-left">Nama File</th>
+                        <th class="py-2 px-3 border border-gray-300 text-left">URL</th>
+                        <th class="py-2 px-3 border border-gray-300 text-left">Tanggal Upload (+7)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (images.length===0) { %>
+                        <tr>
+                            <td colspan="5" class="py-4 text-center text-gray-600">Tidak ada gambar</td>
+                        </tr>
+                        <% } else { %>
+                            <% images.forEach((img, index)=> { %>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="py-2 px-3 border border-gray-300">
+                                        <%= (page - 1) * limit + index + 1 %>
+                                    </td>
+
+                                    <td class="py-2 px-3 border border-gray-300">
+                                        <img src="<%= img.url %>" alt="<%= img.name %>"
+                                            class="w-20 h-20 object-cover rounded-md shadow">
+                                    </td>
+
+                                    <td class="py-2 px-3 border border-gray-300">
+                                        <%= img.name %>
+                                    </td>
+
+                                    <td class="py-2 px-3 border border-gray-300">
+                                        <a href="<%= img.url %>" class="text-blue-600 hover:underline break-all"
+                                            target="_blank">
+                                            <%= img.url %>
+                                        </a>
+                                    </td>
+
+                                    <td class="py-2 px-3 border border-gray-300">
+                                        <%= img.uploadedAtFormatted %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex items-center justify-between mt-6">
+
+            <!-- Prev -->
+            <a href="/gallery?page=<%= page - 1 %>&limit=<%= limit %>&q=<%= encodeURIComponent(q || '') %>&start=<%= start %>&end=<%= end %>"
+                class="px-4 py-2 rounded-md border text-sm
+               <%= page <= 1 ? 'pointer-events-none opacity-40 bg-gray-200' : 'bg-white hover:bg-gray-100' %>">
+                « Prev
+            </a>
+
+            <span class="text-gray-700 text-sm">
+                Halaman <strong>
+                    <%= page %>
+                </strong> dari <strong>
+                    <%= totalPages %>
+                </strong>
+            </span>
+
+            <!-- Next -->
+            <a href="/gallery?page=<%= page + 1 %>&limit=<%= limit %>&q=<%= encodeURIComponent(q || '') %>&start=<%= start %>&end=<%= end %>"
+                class="px-4 py-2 rounded-md border text-sm
+               <%= page >= totalPages ? 'pointer-events-none opacity-40 bg-gray-200' : 'bg-white hover:bg-gray-100' %>">
+                Next »
+            </a>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
